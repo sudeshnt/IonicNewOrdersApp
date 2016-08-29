@@ -1,0 +1,60 @@
+<ion-view view-title="Orders" cache-view="false">
+  <ion-header-sbar class="bar-stable">
+    <div class="bar bar-header bar-light">
+      <h1 class="title">Orders</h1>
+      <button class="button button-icon icon ion-log-out" ng-click="logout();"></button>
+    </div>
+  </ion-header-sbar>
+  <ion-content style="margin-top: 44px;">
+    <div class="row header" style="margin:5px 0px 5px 0px; background-color: #0a9dc7;  box-shadow: 1px 1px 1px 1px #888888;">
+      <div class="col col-10">Id</div>
+      <div class="col col-25">Customer</div>
+      <div class="col col-20">Mobile</div>
+      <div class="col col-20">Expected Time</div>
+      <div class="col col-25">Adrress</div>
+    </div>
+    <div class="row header" style="margin:5px 0px 5px 0px; background-color: #c5e8f2;  box-shadow: 1px 1px 1px 1px #888888;" ng-click = "openModal()">
+      <div class="col col-10">1</div>
+      <div class="col col-25">Sudesh Nimesha</div>
+      <div class="col col-20">0779525168</div>
+      <div class="col col-20">2016-08-26 4.00pm</div>
+      <div class="col col-25">No 41,Temple Rd,Galle</div>
+    </div>
+    <div class="row header" style="margin:5px 0px 5px 0px; background-color: #c5e8f2;  box-shadow: 1px 1px 1px 1px #888888;" ng-click = "openModal()">
+      <div class="col col-10">2</div>
+      <div class="col col-25">Dulaj Kosala</div>
+      <div class="col col-20">0763829129</div>
+      <div class="col col-20">2016-08-26 4.00pm</div>
+      <div class="col col-25">No 21,Temple Rd,Colombo</div>
+    </div>
+  </ion-content>
+
+  <script id="my-modal.html" type="text/ng-template">
+    <ion-modal-view>
+      <ion-header-bar>
+        <h1 class="title">My Modal title</h1>
+      </ion-header-bar>
+      <ion-content>
+        <button class = "button icon icon-right ion-ios-close-outline" ng-click = "closeModal()"></button>
+        <div class="row header" style="margin:5px 0px 5px 0px; background-color: #0a9dc7">
+          <div class="col col-20"></div>
+          <div class="col col-50">Name</div>
+          <div class="col col-20">Size</div>
+          <div class="col col-10">qty</div>
+        </div>
+        <div class="row header" style="margin:5px 0px 5px 0px; background-color: #c5e8f2">
+          <div class="col col-20"><img src="img/fried_rice.jpg" style="width: 100%; height: 100%;"></div>
+          <div class="col col-50">Chicken Fried Rice</div>
+          <div class="col col-20">small</div>
+          <div class="col col-10">2</div>
+        </div>
+        <div class="row header" style="margin:5px 0px 5px 0px; background-color: #c5e8f2">
+          <div class="col col-20"><img src="img/pizza.jpg" style="width: 100%; height: 100%;"></div>
+          <div class="col col-50">Pizza</div>
+          <div class="col col-20">large</div>
+          <div class="col col-10">5</div>
+        </div>
+      </ion-content>
+    </ion-modal-view>
+  </script>
+</ion-view>

@@ -1,0 +1,23 @@
+<ion-view view-title="Login" cache-view="false">
+  <ion-content>
+    <div style="padding:5%;">
+        <div style="text-align: center; padding:10%;"><img src="img/touch2buy.png"></div>
+        <form ng-submit="authenticateUser(user)">
+          <div class="list">
+            <label class="item item-input item-stacked-label">
+              <span class="input-label">Username</span>
+              <input type="text" ng-model="user.username">
+            </label>
+            <label class="item item-input item-stacked-label">
+              <span class="input-label">Password</span>
+              <input type="password" ng-model="user.password">
+            </label>
+
+            <button type="submit" class="button button-block button-positive">
+              Login
+            </button>
+          </div>
+        </form>
+    </div>
+  </ion-content>
+</ion-view>
