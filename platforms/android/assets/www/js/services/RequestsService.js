@@ -8,13 +8,15 @@
 
   function RequestsService($http, $q, $ionicLoading){
 
-    var base_url = 'http://54.169.4.162:3004';
+    var base_url = 'http://52.221.245.58:443';
+    //var base_url = 'http://54.169.4.162:3004';
+    //var base_url = 'http://192.168.8.102:3005';
 
-    function checkuserstatus(device_token){
+    /*function checkuserstatus(device_token){
       console.log("my device token" , device_token);
       var deferred = $q.defer();
       $ionicLoading.show();
-      $http.post(base_url + '/check_user_register_status', {'device_token': device_token})
+      $http.post(base_url + '/checkRegister', {'deviceKey': device_token,organizationId: 35})
         .success(function(response){
           $ionicLoading.hide();
           deferred.resolve(response);
@@ -23,18 +25,16 @@
           deferred.reject();
         });
       return deferred.promise;
-    };
+    };*/
 
-    function register(device_token){
-      console.log("my device token" , device_token);
+    function register(userName,password,device_token){
       var deferred = $q.defer();
       $ionicLoading.show();
-      $http.post(base_url + '/register', {'device_token': device_token})
+      $http.post(base_url + '/connectDevice', {userName:userName,password:password,deviceKey: device_token})
         .success(function(response){
-
+          console.log("register response" + JSON.stringify(response));
           $ionicLoading.hide();
           deferred.resolve(response);
-
         })
         .error(function(data){
           deferred.reject();
@@ -43,11 +43,12 @@
     };
 
     function unregister(device_token){
-      console.log("my device token" , device_token);
+      console.log("my device token"+ device_token);
       var deferred = $q.defer();
       $ionicLoading.show();
-      $http.post(base_url + '/unregister', {'device_token': device_token})
+      $http.post(base_url + '/disconnectDevice', {'deviceKey': device_token,organizationId: 35})
         .success(function(response){
+          console.log("unregister response" + JSON.stringify(device_token));
           $ionicLoading.hide();
           deferred.resolve(response);
         })
@@ -57,10 +58,48 @@
       return deferred.promise;
     };
 
+    function getOpenOrders(token,parameter){
+      var deferred = $q.defer();
+      $ionicLoading.show();
+      console.log(JSON.stringify({token:token,parameter:parameter}));
+      $http.post(base_url + '/orderCriteria',{token:token,parameter:parameter})
+        .success(function(response){
+          $ionicLoading.hide();
+          deferred.resolve(response);
+        })
+        .error(function(data){
+          $ionicLoading.hide();
+          $ionicPopup.alert({
+            template: 'System Error'
+          });
+          deferred.reject();
+        });
+      return deferred.promise;
+    };
+
+    function acceptRejectOrder(status,cartId,narration,token){
+        var deferred = $q.defer();
+        $ionicLoading.show();
+        $http.post(base_url + '/confirmOrRejectOrder',{status:status,cartId:cartId,narration:narration,token:token})
+          .success(function(response){
+            $ionicLoading.hide();
+            deferred.resolve(response);
+          })
+          .error(function(data){
+            $ionicLoading.hide();
+            $ionicPopup.alert({
+              template: 'System Error'
+            });
+            deferred.reject();
+          });
+        return deferred.promise;
+    };
+
     return {
       register: register,
       unregister: unregister,
-      checkuserstatus:checkuserstatus
+      getOpenOrders: getOpenOrders,
+      acceptRejectOrder: acceptRejectOrder
     };
   }
 })();

@@ -1,4 +1,4 @@
-angular.module('starter').controller('OrdersController', function ($scope,$http,$window, $ionicPopup,$timeout,$location,RequestsService,$ionicModal,$ionicHistory,$ionicViewService) {
+angular.module('starter').controller('OrdersController', function ($scope,$http,$window, $ionicPopup,$timeout,$location,RequestsService,$ionicModal,$ionicHistory,$ionicViewService,$filter) {
 
     $ionicModal.fromTemplateUrl('my-modal.html', {
       scope: $scope,
@@ -7,7 +7,8 @@ angular.module('starter').controller('OrdersController', function ($scope,$http,
       $scope.modal = modal;
     });
 
-    $scope.openModal = function() {
+    $scope.openModal = function(order) {
+      $scope.selectedOrder = order;
       $scope.modal.show();
     };
 
@@ -33,69 +34,78 @@ angular.module('starter').controller('OrdersController', function ($scope,$http,
     $scope.newOrders = [];
     $scope.device_token = null;
 
-    pushNotification = window.plugins.pushNotification;
+    init();
 
-    window.onNotification = function(e){
-      console.log('notification received');
-      console.log(e.event);
-      switch(e.event){
-        case 'registered':
-          console.log(e.regid);
-          if(e.regid.length > 0){
-            var device_token = e.regid;
-            $scope.device_token = device_token;
-            window.localStorage.setItem ("device_token",device_token);
-            RequestsService.checkuserstatus(device_token).then(function(response){
-              if(response==='not_exist') {
-                RequestsService.register(device_token).then(function (response) {
-                  console.log(response);
-                  alert('registered!');
-                });
-              }
-            });
+     function init(){
+        loadOpenOrders();
+     };
 
-          }
-          break;
-        case 'message':
-          console.log('message');
-          alert('msg received');
-          alert(JSON.stringify(e));
-          break;
-
-        case 'error':
-          console.log('error');
-          alert('error occured');
-          break;
-
-      }
+    function loadOpenOrders(){
+      var authResponse = JSON.parse(window.localStorage.getItem("authResponse"));
+      var token = authResponse.token;
+      var today = new Date();
+      var yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      var parameter = {
+          "organizationId": authResponse.userData.organizationId,
+          "branchId": authResponse.userData.branchId,
+          "offset": 0,
+          "limit": 100,
+          "searchKey": "",
+          "searchKeys": [
+          ],
+          "value": {},
+          "values": [
+          ],
+          "operator": "",
+          "operators": [
+          ],
+          "fromDate": $filter('date')(yesterday, 'yyyy-MM-dd'),
+          "toDate": $filter('date')(today, 'yyyy-MM-dd'),
+          "orderByKey": "createdDate",
+          "orderByValue":"desc",
+          "statuses": [
+            2,4,5
+          ]
+        };
+        console.log(JSON.stringify(parameter));
+        RequestsService.getOpenOrders(token,parameter).then(function(response){
+            $scope.newOrders = response.data;
+            console.log("orders count : "+response.data.length);
+        });
     };
 
-    window.errorHandler = function(error){
-      alert('an error occured');
-    };
-
-    pushNotification.register(
-      onNotification,
-      errorHandler,
-      {
-        'badge': 'true',
-        'sound': 'true',
-        'alert': 'true',
-        'senderID': '380260995124',
-        'ecb': 'onNotification'
+    $scope.acceptRejectOrder = function (status) {
+      var authResponse = JSON.parse(window.localStorage.getItem("authResponse"));
+      var token = authResponse.token;
+      var narration;
+      if(status==-1){
+          narration = "rejected without reason";
+      }else{
+          narration = "";
       }
-    );
-
-  $scope.logout = function () {
-    RequestsService.unregister($scope.device_token).then(function(response){
-      alert('unregistered!');
-      window.localStorage.setItem ("logging_status",false);
-      $ionicHistory.nextViewOptions({
-        disableBack: true
+      RequestsService.acceptRejectOrder(status,$scope.selectedOrder.cartId,narration,token).then(function(response){
+          $ionicPopup.alert({
+            template: 'Successful!'
+          }).then(function(res){
+            $window.location.reload(true);
+          });
       });
-      $location.path('/login');
-    });
+    };
 
-  };
+    $scope.logout = function () {
+      RequestsService.unregister(window.localStorage.getItem("device_token")).then(function(response){
+          $ionicPopup.alert({
+            template: 'Unregistered'
+          }).then(function(res) {
+          window.localStorage.clear();
+          $ionicHistory.nextViewOptions({
+            disableBack: true
+          });
+          $location.path('/login');
+        });
+      });
+
+    };
 
 });

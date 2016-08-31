@@ -1,1 +1,27 @@
 /* Empty. Add your own CSS if you like */
+
+.order-header {
+  margin:5px 0px 12px 0px;
+  background-color: #6baffe;
+  box-shadow: 1px 1px 1px 1px #888888;
+}
+
+.order{
+  margin:5px 0px 12px 0px;
+  background-color: #e8edff;
+  box-shadow: 1px 1px 1px 1px #888888;
+}
+
+.order-open{
+  margin:5px 0px 12px 0px;
+  background-color: #c5ffca;
+  box-shadow: 1px 1px 1px 1px #888888;
+}
+
+.order-closed{
+  margin:5px 0px 12px 0px;
+  background-color: #ffb383;
+  box-shadow: 1px 1px 1px 1px #888888;
+}
+
+

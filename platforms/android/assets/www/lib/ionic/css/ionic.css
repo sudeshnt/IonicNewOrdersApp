@@ -6642,7 +6642,7 @@ button.item.item-button-right {
 .card,
 .list-inset {
   overflow: hidden;
-  margin: 20px 10px;
+  margin: 10px 2px;
   border-radius: 2px;
   background-color: #fff; }
 
@@ -8578,9 +8578,9 @@ progress {
   position: relative;
   display: inline-block;
   margin: 0;
-  padding: 0 12px;
-  min-width: 52px;
-  min-height: 47px;
+  padding: 0 8px;
+  min-width: 0px;
+  min-height: 0px;
   border-width: 1px;
   border-style: solid;
   border-radius: 4px;
@@ -8588,7 +8588,7 @@ progress {
   text-align: center;
   text-overflow: ellipsis;
   font-size: 16px;
-  line-height: 42px;
+  /*line-height: 42px;*/
   cursor: pointer; }
   .button:hover {
     color: #444;
