@@ -9,6 +9,11 @@ angular.module('starter').controller('OrdersController', function ($scope,$http,
 
     $scope.openModal = function(order) {
       $scope.selectedOrder = order;
+      RequestsService.getBranchDetails($scope.selectedOrder.branchId).then(function(response){
+        console.log(JSON.stringify(response));
+        $scope.selectedBranch = response;
+        console.log(JSON.stringify($scope.selectedBranch));
+      });
       $scope.modal.show();
     };
 
@@ -37,6 +42,7 @@ angular.module('starter').controller('OrdersController', function ($scope,$http,
     init();
 
      function init(){
+        $scope.authResponse = JSON.parse(window.localStorage.getItem("authResponse"));
         loadOpenOrders();
      };
 
@@ -68,46 +74,94 @@ angular.module('starter').controller('OrdersController', function ($scope,$http,
             2,4,5
           ]
         };
-        console.log(JSON.stringify(parameter));
-        RequestsService.getOpenOrders(token,parameter).then(function(response){
+        RequestsService.getOpenOrders(authResponse.isMutant,token,parameter).then(function(response){
             $scope.newOrders = response.data;
-            console.log("orders count : "+response.data.length);
         });
+    };
+
+    $scope.showDeviceKey = function() {
+      // Custom popup
+      $scope.deviceKey = window.localStorage.getItem("device_token");
+      if($scope.deviceKey!=null){
+        var myPopup = $ionicPopup.show({
+          template: '<textarea name="Text1" cols="40" rows="8" ng-model="deviceKey"></textarea>',
+          title: 'Device Token',
+          scope: $scope,
+          buttons: [
+            {text: 'Cancel'}
+          ]
+        });
+      }
     };
 
     $scope.acceptRejectOrder = function (status) {
       var authResponse = JSON.parse(window.localStorage.getItem("authResponse"));
       var token = authResponse.token;
-      var narration;
+      $scope.data = {}
       if(status==-1){
-          narration = "rejected without reason";
+          $ionicPopup.show({
+            template: '<input type = "text" ng-model = "data.narration">',
+            title: 'Reject Order',
+            subTitle: 'Enter Reject Reason',
+            scope: $scope,
+            buttons: [
+              { text: 'Cancel' }, {
+                text: '<b>Reject</b>',
+                type: 'button-danger',
+                onTap: function(e) {
+                  console.log(JSON.stringify($scope.data));
+                  if ($scope.data.narration==undefined) {
+                    console.log($scope.data.narration);
+                    e.preventDefault();
+                  } else {
+                    console.log($scope.data.narration);
+                    RequestsService.acceptRejectOrder(authResponse.isMutant,status,$scope.selectedOrder.cartId,$scope.data.narration,token).then(function(response){
+                      $ionicPopup.alert({
+                        template: 'Successful!'
+                      }).then(function(res){
+                        $window.location.reload(true);
+                      });
+                    });
+                  }
+                }
+              }
+            ]
+          });
       }else{
-          narration = "";
-      }
-      RequestsService.acceptRejectOrder(status,$scope.selectedOrder.cartId,narration,token).then(function(response){
+        RequestsService.acceptRejectOrder(authResponse.isMutant,status,$scope.selectedOrder.cartId,$scope.narration,token).then(function(response){
           $ionicPopup.alert({
             template: 'Successful!'
           }).then(function(res){
-            $scope.closeModal();
-            $location.path('/orders');
-            $window.location.reload(true)
+            $window.location.reload(true);
           });
-      });
+        });
+      }
+      /**/
     };
 
     $scope.logout = function () {
-      RequestsService.unregister(window.localStorage.getItem("device_token")).then(function(response){
-          $ionicPopup.alert({
-            template: 'Unregistered'
-          }).then(function(res) {
-          window.localStorage.clear();
+      if($scope.authResponse.isMutant==true){
+        $ionicPopup.alert({
+          template: 'Unregistered'
+        }).then(function(res) {
           $ionicHistory.nextViewOptions({
             disableBack: true
           });
           $location.path('/login');
         });
-      });
-
+      }else{
+        RequestsService.unregister(window.localStorage.getItem("device_token")).then(function(response){
+          $ionicPopup.alert({
+            template: 'Unregistered'
+          }).then(function(res) {
+            window.localStorage.clear();
+            $ionicHistory.nextViewOptions({
+              disableBack: true
+            });
+            $location.path('/login');
+          });
+        });
+      }
     };
 
 });

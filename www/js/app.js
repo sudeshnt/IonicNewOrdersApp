@@ -33,20 +33,18 @@ angular.module('starter', ['ionic','ionic.service.core', 'ngCordova',  'ionic.se
               console.log(window.localStorage.getItem ("device_token"));
               if(window.localStorage.getItem ("device_token")===null) {
                 window.localStorage.setItem ("device_token",device_token);
-                console.log('null '+JSON.stringify(window.localStorage.getItem ("device_token")));
-              }else{
-                console.log('NOT null '+JSON.stringify(window.localStorage.getItem ("device_token")));
+                console.log(JSON.stringify(window.localStorage));
               }
             }
             break;
           case 'message':
             console.log('message');
-            alert('msg received');
-            alert(JSON.stringify(e));
+            /*alert('msg received');
+            alert(JSON.stringify(e));*/
             break;
           case 'error':
             console.log('error');
-            alert('error occured');
+            /*alert('error occured');*/
             break;
         }
       };
@@ -70,12 +68,13 @@ angular.module('starter', ['ionic','ionic.service.core', 'ngCordova',  'ionic.se
   });
 
   if(window.localStorage.getItem("logging_status") !== null && window.localStorage.getItem("logging_status") == 'true' && window.localStorage.getItem ("device_token")!==null) {
-    console.log("app start");
+    console.log(JSON.stringify(window.localStorage));
     $ionicHistory.nextViewOptions({
       disableBack: true
     });
     $location.path('/orders');
   }else{
+    window.localStorage.clear();
     $location.path('/login');
   }
 
@@ -133,9 +132,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'ngCordova',  'ionic.se
       templateUrl: 'templates/orders.html',
       controller: 'OrdersController'
     })
-
     $urlRouterProvider.otherwise('/loading');
-
 });
 
 

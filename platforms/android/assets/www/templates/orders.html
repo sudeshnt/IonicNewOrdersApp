@@ -1,6 +1,7 @@
 <ion-view view-title="Orders" cache-view="false">
   <ion-header-sbar class="bar-stable">
     <div class="bar bar-header bar-light">
+      <button class="button button-icon icon ion-key" ng-if="authResponse.isMutant==true" ng-click="showDeviceKey()"></button>
       <h1 class="title">Orders</h1>
       <button class="button button-icon icon ion-log-out" ng-click="logout();"></button>
     </div>
@@ -27,7 +28,7 @@
         <button class = "button button-icon icon ion-ios-close-outline" ng-click="closeModal()" style="float: right;"></button>
       </ion-header-bar>
       <ion-content style="margin-left: 3px; margin-right: 3px;">
-        <div class="row header">
+        <div class="row header" ng-if="selectedOrder.status==2">
           <div class="col">
             <button class="button button-balanced" style="margin:2px; font-size:smaller; height:40px; float:right;"  ng-click="acceptRejectOrder(1)">Approve</button>
             <button class="button button-assertive" style="margin:2px; font-size:smaller; height:40px; float:right;"  ng-click="acceptRejectOrder(-1)">Reject</button>
@@ -54,6 +55,20 @@
           <div class="item item-text-wrap">
             <strong>{{selectedOrder.customerName}}</strong>
             <p>{{selectedOrder.customerMobile}}<br>{{selectedOrder.addressLine1}}<br>{{selectedOrder.addressLine2}}<br>{{selectedOrder.city}}</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="item item-divider">
+            Branch Details
+          </div>
+          <div class="item item-text-wrap">
+            <strong>{{selectedBranch.branchName}}</strong>
+            <p>
+            <div class="row header" style="padding: 0px;">
+              <div class="col-5"><a href="tel:+{{selectedBranch.phone}}" class="button button-icon icon ion-android-call" style="padding: 0;"></a></div>
+              <div class="col" style="line-height: 28px;padding: 7px;"><a href="tel:+{{selectedBranch.phone}}">{{selectedBranch.phone}}</a></div>
+            </div>
+           {{selectedBranch.addressLine1}}<br>{{selectedBranch.addressLine2}}<br>{{selectedBranch.cityName}}</p>
           </div>
         </div>
       </ion-content>

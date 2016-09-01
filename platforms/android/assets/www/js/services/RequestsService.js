@@ -6,26 +6,11 @@
   angular.module('starter')
     .service('RequestsService', ['$http', '$q', '$ionicLoading',  RequestsService]);
 
-  function RequestsService($http, $q, $ionicLoading){
+  function RequestsService($http, $q, $ionicLoading,$ionicPopup){
 
     var base_url = 'http://52.221.245.58:443';
     //var base_url = 'http://54.169.4.162:3004';
-    //var base_url = 'http://192.168.8.102:3005';
-
-    /*function checkuserstatus(device_token){
-      console.log("my device token" , device_token);
-      var deferred = $q.defer();
-      $ionicLoading.show();
-      $http.post(base_url + '/checkRegister', {'deviceKey': device_token,organizationId: 35})
-        .success(function(response){
-          $ionicLoading.hide();
-          deferred.resolve(response);
-        })
-        .error(function(data){
-          deferred.reject();
-        });
-      return deferred.promise;
-    };*/
+   // var base_url = 'http://192.168.8.101:3005';
 
     function register(userName,password,device_token){
       var deferred = $q.defer();
@@ -36,7 +21,13 @@
           $ionicLoading.hide();
           deferred.resolve(response);
         })
-        .error(function(data){
+        .error(function(data,status){
+          $ionicLoading.hide();
+          if(status==401){
+            $ionicPopup.alert({
+              template: 'Not Authorized!'
+            });
+          }
           deferred.reject();
         });
       return deferred.promise;
@@ -52,54 +43,113 @@
           $ionicLoading.hide();
           deferred.resolve(response);
         })
-        .error(function(data){
+        .error(function(data,status){
+          $ionicLoading.hide();
+          if(status==401){
+            $ionicPopup.alert({
+              template: 'Not Authorized!'
+            });
+          }
           deferred.reject();
         });
       return deferred.promise;
     };
 
-    function getOpenOrders(token,parameter){
+    function getOpenOrders(isMutant,token,parameter){
       var deferred = $q.defer();
+      var reqJSON = '';
+      var url = '';
+
       $ionicLoading.show();
-      console.log(JSON.stringify({token:token,parameter:parameter}));
-      $http.post(base_url + '/orderCriteria',{token:token,parameter:parameter})
+
+      if(isMutant!=undefined){
+        if(isMutant==true){
+          reqJSON = {deviceKey:token,parameter:parameter};
+          url = '/allOrderCriteria';
+        }
+      }else{
+        reqJSON = {token:token,parameter:parameter};
+        url = '/orderCriteria';
+      }
+      console.log("is Mutant"+JSON.stringify(reqJSON));
+      $http.post(base_url + url , reqJSON)
         .success(function(response){
           $ionicLoading.hide();
           deferred.resolve(response);
         })
-        .error(function(data){
+        .error(function(data,status){
           $ionicLoading.hide();
-          $ionicPopup.alert({
-            template: 'System Error'
-          });
+          if(status==401){
+            $ionicPopup.alert({
+              template: 'Not Authorized!'
+            });
+          }
           deferred.reject();
         });
       return deferred.promise;
     };
 
-    function acceptRejectOrder(status,cartId,narration,token){
+    function acceptRejectOrder(isMutant,status,cartId,narration,token){
         var deferred = $q.defer();
+        var reqJSON = '';
+        var url = '';
+
         $ionicLoading.show();
-        $http.post(base_url + '/confirmOrRejectOrder',{status:status,cartId:cartId,narration:narration,token:token})
+
+        if(isMutant!=undefined){
+          if(isMutant==true){
+            reqJSON = {status:status,cartId:cartId,narration:narration,deviceKey:token};
+            url = '/adminConfirmOrRejectOrder';
+          }
+        }else{
+          reqJSON = {status:status,cartId:cartId,narration:narration,token:token};
+          url = '/confirmOrRejectOrder';
+        }
+      console.log("is Mutant"+JSON.stringify(reqJSON));
+        $http.post(base_url+url,reqJSON)
           .success(function(response){
             $ionicLoading.hide();
             deferred.resolve(response);
           })
-          .error(function(data){
+          .error(function(data,status){
             $ionicLoading.hide();
-            $ionicPopup.alert({
-              template: 'System Error'
-            });
+            if(status==401){
+              $ionicPopup.alert({
+                template: 'Not Authorized!'
+              });
+            }
             deferred.reject();
           });
         return deferred.promise;
+    };
+
+    function getBranchDetails(branch_id){
+      var deferred = $q.defer();
+      $ionicLoading.show();
+      console.log(branch_id);
+      $http.post(base_url + '/getBranch', {'branch_id': branch_id})
+        .success(function(response){
+          $ionicLoading.hide();
+          deferred.resolve(response);
+        })
+        .error(function(data,status){
+          $ionicLoading.hide();
+          if(status==401){
+            $ionicPopup.alert({
+              template: 'Not Authorized!'
+            });
+          }
+          deferred.reject();
+        });
+      return deferred.promise;
     };
 
     return {
       register: register,
       unregister: unregister,
       getOpenOrders: getOpenOrders,
-      acceptRejectOrder: acceptRejectOrder
+      acceptRejectOrder: acceptRejectOrder,
+      getBranchDetails:getBranchDetails
     };
   }
 })();
