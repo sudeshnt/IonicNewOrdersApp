@@ -43,7 +43,14 @@ angular.module('starter').controller('OrdersController', function ($scope,$http,
 
      function init(){
         $scope.authResponse = JSON.parse(window.localStorage.getItem("authResponse"));
-        loadOpenOrders();
+       if(window.localStorage.getItem("org_list")==null){
+         RequestsService.getAllOrganizations().then(function(response){
+           window.localStorage.setItem ("org_list",JSON.stringify(response));
+         });
+       }
+       $scope.orgList = JSON.parse(window.localStorage.getItem("org_list"));
+       console.log("init org list"+JSON.stringify($scope.orgList));
+       loadOpenOrders();
      };
 
     function loadOpenOrders(){
@@ -76,7 +83,21 @@ angular.module('starter').controller('OrdersController', function ($scope,$http,
         };
         RequestsService.getOpenOrders(authResponse.isMutant,token,parameter).then(function(response){
             $scope.newOrders = response.data;
+              for(var i=0;i<$scope.newOrders.length;i++){
+                $scope.newOrders[i].organization = getOrgById($scope.newOrders[i].organizationId)
+              }
         });
+    };
+
+    function getOrgById(orgId) {
+      console.log("orgId : "+orgId);
+      for(var i=0;i<$scope.orgList.length;i++){
+        console.log($scope.orgList[i].orgId);
+        if(orgId == $scope.orgList[i].orgId){
+          console.log($scope.orgList[i].orgName);
+          return $scope.orgList[i];
+        }
+      }
     };
 
     $scope.showDeviceKey = function() {

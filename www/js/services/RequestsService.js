@@ -8,9 +8,11 @@
 
   function RequestsService($http, $q, $ionicLoading,$ionicPopup){
 
-    var base_url = 'http://52.221.245.58:443';
+    var base_url = 'https://ws.touch2buy.xyz';
+    var org_base_url = "http://52.16.0.100:8080";
+    //var base_url = 'http://52.221.245.58:443';
     //var base_url = 'http://54.169.4.162:3004';
-   // var base_url = 'http://192.168.8.101:3005';
+    //var base_url = 'http://192.168.8.101:3005';
 
     function register(userName,password,device_token){
       var deferred = $q.defer();
@@ -144,12 +146,33 @@
       return deferred.promise;
     };
 
+    function getAllOrganizations(){
+      var deferred = $q.defer();
+      $ionicLoading.show();
+      $http.post(org_base_url + '/api/organization/getAll')
+        .success(function(response){
+          $ionicLoading.hide();
+          deferred.resolve(response);
+        })
+        .error(function(data,status){
+          $ionicLoading.hide();
+          if(status==401){
+            $ionicPopup.alert({
+              template: 'Not Authorized!'
+            });
+          }
+          deferred.reject();
+        });
+      return deferred.promise;
+    };
+
     return {
       register: register,
       unregister: unregister,
       getOpenOrders: getOpenOrders,
       acceptRejectOrder: acceptRejectOrder,
-      getBranchDetails:getBranchDetails
+      getBranchDetails:getBranchDetails,
+      getAllOrganizations:getAllOrganizations
     };
   }
 })();
