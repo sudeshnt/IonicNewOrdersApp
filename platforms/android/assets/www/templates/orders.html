@@ -7,15 +7,16 @@
     </div>
   </ion-header-sbar>
   <ion-content style="margin-top: 44px; margin-left: 3px; margin-right: 3px;">
+
     <div class="row header order-header">
-      <div class="col col-15">Id</div>
-      <div class="col col-25">Customer</div>
+      <div class="col col-10">Id</div>
+      <div class="col col-30">Customer</div>
       <div class="col col-30">Mobile</div>
       <div class="col col-30">Expected Time</div>
     </div>
     <div ng-repeat="order in newOrders" ng-class="order.status==2? 'row header order-open':'row header order-closed'" ng-click="openModal(order)" >
-      <div class="col col-15">{{order.cartId}}</div>
-      <div class="col col-25">{{order.customerName}}</div>
+      <div class="col col-10"><img ng-src="{{order.organization.images[selectedOrder.organization.images.length-1].imageUri}}" style="height: 20px; width: 20px;" > {{order.cartId}}</div>
+      <div class="col col-30">{{order.customerName}}</div>
       <div class="col col-30">{{order.customerMobile}}</div>
       <div class="col col-30">{{order.expectedTime}}</div>
     </div>
@@ -28,6 +29,7 @@
         <button class = "button button-icon icon ion-ios-close-outline" ng-click="closeModal()" style="float: right;"></button>
       </ion-header-bar>
       <ion-content style="margin-left: 3px; margin-right: 3px;">
+        <!--{{orgList}}-->
         <div class="row header" ng-if="selectedOrder.status==2">
           <div class="col">
             <button class="button button-balanced" style="margin:2px; font-size:smaller; height:40px; float:right;"  ng-click="acceptRejectOrder(1)">Approve</button>
@@ -62,6 +64,8 @@
             Branch Details
           </div>
           <div class="item item-text-wrap">
+            <img ng-src="{{selectedOrder.organization.images[selectedOrder.organization.images.length-1].imageUri}}" style="height: 40px; width: 40px;">
+            <strong>{{selectedOrder.organization.orgName}}</strong><br>
             <strong>{{selectedBranch.branchName}}</strong>
             <p>
             <div class="row header" style="padding: 0px;">
