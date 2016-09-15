@@ -10,9 +10,7 @@ angular.module('starter').controller('OrdersController', function ($scope,$http,
     $scope.openModal = function(order) {
       $scope.selectedOrder = order;
       RequestsService.getBranchDetails($scope.selectedOrder.branchId).then(function(response){
-        console.log(JSON.stringify(response));
         $scope.selectedBranch = response;
-        console.log(JSON.stringify($scope.selectedBranch));
       });
       $scope.modal.show();
     };
@@ -90,11 +88,8 @@ angular.module('starter').controller('OrdersController', function ($scope,$http,
     };
 
     function getOrgById(orgId) {
-      console.log("orgId : "+orgId);
       for(var i=0;i<$scope.orgList.length;i++){
-        console.log($scope.orgList[i].orgId);
         if(orgId == $scope.orgList[i].orgId){
-          console.log($scope.orgList[i].orgName);
           return $scope.orgList[i];
         }
       }

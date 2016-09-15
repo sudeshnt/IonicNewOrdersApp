@@ -10,9 +10,6 @@
         "com.phonegap.plugins.PushPlugin": {
             "PACKAGE_NAME": "com.ionicframework.ordersapp409316"
         },
-        "cordova-plugin-console": {
-            "PACKAGE_NAME": "com.ionicframework.ordersapp409316"
-        },
         "cordova-plugin-device": {
             "PACKAGE_NAME": "com.ionicframework.ordersapp409316"
         },

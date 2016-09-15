@@ -6,7 +6,7 @@ angular.module('starter').controller('LoginController', function ($scope,$http,$
       if(user.username=='admin@mutant.com' && user.password=='mutant' && window.localStorage.getItem("device_token")!==null){
           window.localStorage.setItem ("logging_status",true);
           window.localStorage.setItem ("authResponse",JSON.stringify({isMutant:true,token:window.localStorage.getItem("device_token"),userData:{organizationId:0,branchId:0}}));
-        if(window.localStorage.getItem("org_list")==null)
+          if(window.localStorage.getItem("org_list")==null)
           {
             RequestsService.getAllOrganizations().then(function(response){
               window.localStorage.setItem ("org_list",JSON.stringify(response));
@@ -25,6 +25,12 @@ angular.module('starter').controller('LoginController', function ($scope,$http,$
               window.localStorage.setItem ("logging_status",true);
               $scope.authResponse = response;
               window.localStorage.setItem ("authResponse",JSON.stringify(response));
+              if(window.localStorage.getItem("org_list")==null)
+              {
+                RequestsService.getAllOrganizations().then(function(response){
+                  window.localStorage.setItem ("org_list",JSON.stringify(response));
+                });
+              }
               $ionicPopup.alert({
                 template: 'Registered'
               });
